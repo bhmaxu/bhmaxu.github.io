@@ -1,0 +1,76 @@
+<!DOCTYPE html><html lang="en"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=""><link rel="stylesheet" type="text/css" href="//fonts.loli.net/css?family=Source+Code+Pro"><link rel="stylesheet" type="text/css" href="/css/style.css?v=2.0.4"><link rel="stylesheet" type="text/css" href="/css/highlight.css?v=2.0.4"><link rel="Shortcut Icon" href="/favicon.ico"><link rel="bookmark" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><title>计算机网络（4）-传输层（part1） | 马旭的博客</title><meta name="generator" content="Hexo 4.2.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">计算机网络（4）-传输层（part1）</h1><a id="logo" href="/.">马旭的博客</a><p class="description"></p></div><div id="nav-menu"><a href="/." class="current"><i class="fa fa-home"> Home</i></a><a href="/archives/"><i class="fa fa-archive"> Archive</i></a><a href="/about-me/"><i class="fa fa-user"> About</i></a></div><div id="search-form"><div id="result-mask" class="hide"></div><label><input id="search-key" type="text" autocomplete="off" placeholder="search"></label><div id="result-wrap" class="hide"><div id="search-result"></div></div><div class="hide"><template id="search-tpl"><div class="item"><a href="/{path}" title="{title}"><div class="title">{title}</div><div class="time">{date}</div><div class="tags">{tags}</div></a></div></template></div></div></div><div id="layout" class="layout-g"><div class="layout-l"><div class="content_container"><div class="post"><h1 class="post-title">计算机网络（4）-传输层（part1）</h1><div class="post-meta"><a href="/2020/01/29/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%884%EF%BC%89-%E4%BC%A0%E8%BE%93%E5%B1%82%EF%BC%88part1%EF%BC%89/#comments" class="comment-count"></a><p><span class="date">Jan 29, 2020</span><span><i id="busuanzi_container_page_pv"><i id="busuanzi_value_page_pv"></i><i>Hits</i></i></span></p></div><div class="post-content"><h2 id="传输层服务"><a href="#传输层服务" class="headerlink" title="传输层服务"></a>传输层服务</h2><p>传输层协议为运行在不同Host上的进程提供了一种逻辑通信机制（端到端）。</p>
+<p><strong>发送方</strong>：将应用递交的消息分成多个Segment，并向下传给网络层。</p>
+<p><strong>接收方</strong>：将接收到的Segment组装成消息，并上交给应用层。</p>
+<p>常见的协议如Internet上的TCP和UDP协议。</p>
+<p>与网络层相比，传输层提供的是<strong>进程</strong>之间的逻辑通信机制，网络层提供的是<strong>主机</strong>之间的逻辑通信机制。</p>
+<h2 id="多路复用和多路分用"><a href="#多路复用和多路分用" class="headerlink" title="多路复用和多路分用"></a>多路复用和多路分用</h2><p>原因：一个主机上的应用层可能运行多个进程</p>
+<p>接收端进程<strong>多路分用</strong>：传输层根据头部信息将接收到的Segment交给正确的Socket。</p>
+<p>发送端进行<strong>多路复用</strong>：从多个Socket接收数据，为每块数据封装头部信息，生成Segment，交给网络层。</p>
+<p><img src="https://i.postimg.cc/KvPbzW97/screenshot-2.png" alt="TCP/UDP段格式"></p>
+<h3 id="无连接分用（UDP）"><a href="#无连接分用（UDP）" class="headerlink" title="无连接分用（UDP）"></a>无连接分用（UDP）</h3><p>Socket用目的IP地址和目的端口号的二元组标识。</p>
+<p>来源于不同源IP地址或源端口号的IP数据包会被导向同一个Socket。</p>
+<h3 id="面向连接的分用（TCP）"><a href="#面向连接的分用（TCP）" class="headerlink" title="面向连接的分用（TCP）"></a>面向连接的分用（TCP）</h3><p>Socket用源IP地址、源端口号、目的IP地址、目的端口号的四元组标识。</p>
+<p>服务器同时支持多个TCP Socket，为每个客户端开不同的Socket。例如如果同一个客户端用两个不同的端口向同一个服务器的同一个端口发送TCP请求，这两个请求在服务器会对应两个不同的Socket（源端口号不同）。</p>
+<h2 id="UDP协议"><a href="#UDP协议" class="headerlink" title="UDP协议"></a>UDP协议</h2><p>​    UDP提供“best effort”服务，可能发生丢失，也可能不按序到达；同时是无连接的，每个UDP段的处理独立于其他端，发送方与接收方之间不需要握手。</p>
+<p>基于Internet IP协议：</p>
+<ul>
+<li>复用/分用</li>
+<li>简单的错误校验</li>
+</ul>
+<p>优势：</p>
+<ul>
+<li>无需连接</li>
+<li>实现简单</li>
+<li>头部开销少</li>
+<li>没有拥塞控制，应用更好控制发送时间和速率</li>
+</ul>
+<p>用途：</p>
+<ul>
+<li>流媒体应用（容忍丢失，速率敏感）</li>
+<li>DNS</li>
+</ul>
+<p>UDP也可以实现可靠数据传输，但需要在应用层实现相应的功能。</p>
+<p><img src="https://i.postimg.cc/59C01n81/screenshot-2.png" alt="UDP端"></p>
+<p>校验和（checksum）：检测UDP段在传输中是否发送错误</p>
+<p>校验和相等也可能发生了错误。</p>
+<h2 id="可靠数据传输（rdt）"><a href="#可靠数据传输（rdt）" class="headerlink" title="可靠数据传输（rdt）"></a>可靠数据传输（rdt）</h2><p><img src="https://i.postimg.cc/qRbMM4Kq/screenshot-29.png" alt="rdt"></p>
+<p>​    通过可靠数据传输协议，利用不可靠信道（如IP协议）建立可靠传输，注意可靠数据传输协议与不可靠信道是双向交互，才能实现可靠传输。</p>
+<h3 id="Rdt1-0-可靠信道上的可靠数据传输"><a href="#Rdt1-0-可靠信道上的可靠数据传输" class="headerlink" title="Rdt1.0 可靠信道上的可靠数据传输"></a>Rdt1.0 可靠信道上的可靠数据传输</h3><p>条件：底层信道完全可靠：不会发送错误，不会丢弃分组；发送方与接收方的有限状态机独立</p>
+<p><img src="https://i.postimg.cc/8zJyZH40/screenshot-30.png" alt="rdt1.0"></p>
+<h3 id="Rdt2-0-产生位错误的信道"><a href="#Rdt2-0-产生位错误的信道" class="headerlink" title="Rdt2.0 产生位错误的信道"></a>Rdt2.0 产生位错误的信道</h3><p>条件：底层信道只会产生位错误，不会丢弃分组，保证顺序</p>
+<p>可以利用<strong>校验和</strong>检测位错误</p>
+<p>接受发需要显式告诉发送方分组正确（ACK，acknowledgements）或错误接收（NAK），发送方收到NAK后，重新传送分组</p>
+<p>这种基于重传机制的rdt协议称为ARQ（Automatic Repeat reQuest）协议</p>
+<p><img src="https://i.postimg.cc/YqkR67Lj/screenshot-31.png" alt="rdt2.0"></p>
+<h3 id="Rdt2-1"><a href="#Rdt2-1" class="headerlink" title="Rdt2.1"></a>Rdt2.1</h3><p>Rdt2.0缺点：无法处理ACK/NAK发生错误的情况</p>
+<p>发送方发送分组时添加<strong>序列号</strong>，如果ACK/NAK发生错误，则重新发送分组，序列号可以避免分组不会被重复接收</p>
+<p><img src="https://i.postimg.cc/bJPxPHhL/screenshot-32.png" alt="rdt2.1"></p>
+<p><img src="https://i.postimg.cc/nLprcdXs/screenshot-33.png" alt="rdt2.1"></p>
+<h3 id="Rdt2-2-无NAK消息协议"><a href="#Rdt2-2-无NAK消息协议" class="headerlink" title="Rdt2.2 无NAK消息协议"></a>Rdt2.2 无NAK消息协议</h3><p>在ACK中显示加入被确认分组的序列号</p>
+<p><img src="https://i.postimg.cc/VvtPtCvS/screenshot-34.png" alt="rdt2.2"></p>
+<h3 id="Rdt3-0"><a href="#Rdt3-0" class="headerlink" title="Rdt3.0"></a>Rdt3.0</h3><p>条件：信道既可能发送错误，也可能丢失分组</p>
+<p>方法：发送方等待合理时间，如果没收到ACK，重传，序列号可以解决重传可能导致的重复问题</p>
+<p><img src="https://i.postimg.cc/qMgCPBYN/screenshot-35.png" alt="rdt3.0"></p>
+<p>但Rdt3.0性能很差，因为大量时间浪费在等待对方的响应上</p>
+<h3 id="流水线协议"><a href="#流水线协议" class="headerlink" title="流水线协议"></a>流水线协议</h3><p>允许发送方在收到ACK之前连续发送多个分组，需要更大的序列号范围以及更大的空间缓存分组。流水线可以显著降低Rdt中等待响应带来的低效率。</p>
+<h3 id="滑动窗口协议"><a href="#滑动窗口协议" class="headerlink" title="滑动窗口协议"></a>滑动窗口协议</h3><p>窗口：允许使用的序列号范围</p>
+<p>滑动窗口：随着协议的运行，窗口在序列号空间内向前滑动</p>
+<h4 id="GBN（Go-Back-N）协议"><a href="#GBN（Go-Back-N）协议" class="headerlink" title="GBN（Go-Back-N）协议"></a>GBN（Go-Back-N）协议</h4><p>分组头部包含k-bit序列号</p>
+<p>窗口尺寸为N，最多允许N个分组未确认</p>
+<p>ACK（n），确认到n的分组均已正确接收，<strong>累积确认</strong></p>
+<p>Timeout（n），重传序列号大于等于n，还未收到ACK的所有分组</p>
+<p><img src="https://i.postimg.cc/YShwfVyL/screenshot-36.png" alt="GBN"></p>
+<p>接收方发送拥有最高序列号、已被正确接收的分组的ACK（当前期望接收的分组），乱序到达的分组直接丢弃</p>
+<p><img src="https://i.postimg.cc/VkNNpKVm/screenshot-37.png" alt="GBN示例"></p>
+<h4 id="SR（Selective-Repeat）协议"><a href="#SR（Selective-Repeat）协议" class="headerlink" title="SR（Selective Repeat）协议"></a>SR（Selective Repeat）协议</h4><p>GBN协议可能导致正确接收的分组被丢弃，导致重复发送</p>
+<p>SR协议对每个分组单独进行确认，接收方设置缓存机制，缓存乱序到达的分组，增加接收方的窗口</p>
+<p><img src="https://i.postimg.cc/bwzjBddn/screenshot-38.png" alt="SR"></p>
+<p><img src="https://i.postimg.cc/3xWtNHc6/screenshot-39.png" alt="SR示例"></p>
+<p>序列号和两个窗口相比需要足够大，否则可能出现错误</p>
+</div><div class="post-copyright"><blockquote><p>Original author: 马旭</p><p>Original link: <a href="https://bhmaxu.github.io/2020/01/29/计算机网络（4）-传输层（part1）/">https://bhmaxu.github.io/2020/01/29/计算机网络（4）-传输层（part1）/</a></p><p>Copyright Notice: Please indicate the source of the reprint (must retain the author's signature and link)</p></blockquote></div><div class="tags"><a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a></div><div class="post-share"><div class="social-share"><span>Share:</span></div></div><div class="post-nav"><a href="/2020/02/08/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%885%EF%BC%89-%E4%BC%A0%E8%BE%93%E5%B1%82%EF%BC%88part2%EF%BC%89/" class="pre">计算机网络（5）-传输层（part2）</a><a href="/2020/01/28/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%883%EF%BC%89-%E5%BA%94%E7%94%A8%E5%B1%82%EF%BC%88part2%EF%BC%89/" class="next">计算机网络（3）-应用层（part2）</a></div><div id="comments"></div></div></div></div><div class="layout-r"><div id="sidebar"><div class="search-pla"></div><div id="toc" class="widget"><div class="widget-title"><i class="fa fa-fei">Contents</i></div><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#传输层服务"><span class="toc-text">传输层服务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#多路复用和多路分用"><span class="toc-text">多路复用和多路分用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#无连接分用（UDP）"><span class="toc-text">无连接分用（UDP）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#面向连接的分用（TCP）"><span class="toc-text">面向连接的分用（TCP）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UDP协议"><span class="toc-text">UDP协议</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#可靠数据传输（rdt）"><span class="toc-text">可靠数据传输（rdt）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Rdt1-0-可靠信道上的可靠数据传输"><span class="toc-text">Rdt1.0 可靠信道上的可靠数据传输</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Rdt2-0-产生位错误的信道"><span class="toc-text">Rdt2.0 产生位错误的信道</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Rdt2-1"><span class="toc-text">Rdt2.1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Rdt2-2-无NAK消息协议"><span class="toc-text">Rdt2.2 无NAK消息协议</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Rdt3-0"><span class="toc-text">Rdt3.0</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#流水线协议"><span class="toc-text">流水线协议</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#滑动窗口协议"><span class="toc-text">滑动窗口协议</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#GBN（Go-Back-N）协议"><span class="toc-text">GBN（Go-Back-N）协议</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#SR（Selective-Repeat）协议"><span class="toc-text">SR（Selective Repeat）协议</span></a></li></ol></li></ol></li></ol></div><div class="widget"><div class="widget-title"><i class="fa fa-xie"> Recent</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2020/03/05/%E7%96%AB%E6%83%85%E6%9C%9F%E9%97%B4%E7%9A%84%E8%87%AA%E6%88%91%E5%8F%8D%E6%80%9D/">疫情期间的自我反思</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/11/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%8810%EF%BC%89-%E5%B1%80%E5%9F%9F%E7%BD%91/">计算机网络（10）-局域网</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/11/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%882%EF%BC%89/">设计模式（2）</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/10/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%881%EF%BC%89/">设计模式（1）</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%889%EF%BC%89-%E9%93%BE%E8%B7%AF%E5%B1%82/">计算机网络（9）-链路层</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%888%EF%BC%89-%E7%BD%91%E7%BB%9C%E5%B1%82%EF%BC%88part3%EF%BC%89/">计算机网络（8）-网络层（part3）</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%887%EF%BC%89-%E7%BD%91%E7%BB%9C%E5%B1%82%EF%BC%88part2%EF%BC%89/">计算机网络（7）-网络层（part2）</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/09/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%886%EF%BC%89-%E7%BD%91%E7%BB%9C%E5%B1%82%EF%BC%88part1%EF%BC%89/">计算机网络（6）-网络层（part1）</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/08/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%885%EF%BC%89-%E4%BC%A0%E8%BE%93%E5%B1%82%EF%BC%88part2%EF%BC%89/">计算机网络（5）-传输层（part2）</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/01/29/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%884%EF%BC%89-%E4%BC%A0%E8%BE%93%E5%B1%82%EF%BC%88part1%EF%BC%89/">计算机网络（4）-传输层（part1）</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-biao"> Tags</i></div><div class="tagcloud"><a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" style="font-size: 15px;">计算机网络</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 15px;">设计模式</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-archive"> Archive</i></div><ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/">2020</a><span class="archive-list-count">13</span></li></ul></div></div></div></div><a id="totop" href="#top"></a><div id="footer"><div class="footer-info"><p><a href="/baidusitemap.xml">Site Map</a> |  <a href="/atom.xml">Subscribe to this site</a> |  <a href="/about/">Contact the blogger</a></p><p>本站总访问量：<i id="busuanzi_container_site_pv"><i id="busuanzi_value_site_pv"></i></i>次，本站总访客数:<i id="busuanzi_container_site_uv"><i id="busuanzi_value_site_uv"></i></i>人</p><p><span> Copyright &copy;<a href="/." rel="nofollow">马旭.</a></span><span> Theme by<a rel="nofollow" target="_blank" href="https://github.com/chaooo/hexo-theme-BlueLake"> BlueLake.</a></span><span> Count by<a href="http://busuanzi.ibruce.info/" target="_blank" rel="noopener"> busuanzi.</a></span><span> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a></span></p></div></div></div><script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script><script type="text/javascript" src="/js/search.json.js?v=2.0.4"></script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  }
+});</script><script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML" async></script><script type="text/javascript" src="/js/toctotop.js?v=2.0.4" async></script><link rel="stylesheet" type="text/css" href="/share/css/share.css"><script type="text/javascript" src="/share/js/social-share.js" charset="utf-8"></script><script type="text/javascript" src="/share/js/qrcode.js" charset="utf-8"></script></body></html>

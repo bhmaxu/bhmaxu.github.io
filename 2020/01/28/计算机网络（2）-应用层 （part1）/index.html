@@ -1,0 +1,92 @@
+<!DOCTYPE html><html lang="en"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=""><link rel="stylesheet" type="text/css" href="//fonts.loli.net/css?family=Source+Code+Pro"><link rel="stylesheet" type="text/css" href="/css/style.css?v=2.0.4"><link rel="stylesheet" type="text/css" href="/css/highlight.css?v=2.0.4"><link rel="Shortcut Icon" href="/favicon.ico"><link rel="bookmark" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><title>计算机网络（2）-应用层(part1) | 马旭的博客</title><meta name="generator" content="Hexo 4.2.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">计算机网络（2）-应用层(part1)</h1><a id="logo" href="/.">马旭的博客</a><p class="description"></p></div><div id="nav-menu"><a href="/." class="current"><i class="fa fa-home"> Home</i></a><a href="/archives/"><i class="fa fa-archive"> Archive</i></a><a href="/about-me/"><i class="fa fa-user"> About</i></a></div><div id="search-form"><div id="result-mask" class="hide"></div><label><input id="search-key" type="text" autocomplete="off" placeholder="search"></label><div id="result-wrap" class="hide"><div id="search-result"></div></div><div class="hide"><template id="search-tpl"><div class="item"><a href="/{path}" title="{title}"><div class="title">{title}</div><div class="time">{date}</div><div class="tags">{tags}</div></a></div></template></div></div></div><div id="layout" class="layout-g"><div class="layout-l"><div class="content_container"><div class="post"><h1 class="post-title">计算机网络（2）-应用层(part1)</h1><div class="post-meta"><a href="/2020/01/28/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%882%EF%BC%89-%E5%BA%94%E7%94%A8%E5%B1%82%20%EF%BC%88part1%EF%BC%89/#comments" class="comment-count"></a><p><span class="date">Jan 28, 2020</span><span><i id="busuanzi_container_page_pv"><i id="busuanzi_value_page_pv"></i><i>Hits</i></i></span></p></div><div class="post-content"><p>介绍5层模型中的应用层,包括网络应用的基本结构,HTTP协议,Web服务等</p>
+<h2 id="网络应用的体系结构"><a href="#网络应用的体系结构" class="headerlink" title="网络应用的体系结构"></a>网络应用的体系结构</h2><h3 id="客户机-服务器结构（Client-Service，C-S）"><a href="#客户机-服务器结构（Client-Service，C-S）" class="headerlink" title="客户机/服务器结构（Client-Service，C/S）"></a>客户机/服务器结构（Client-Service，C/S）</h3><p><img src="https://i.postimg.cc/zGc7TX3T/screenshot-2.png" alt="C/S"></p>
+<h3 id="点对点结构（Peer-to-Peer，P2P）"><a href="#点对点结构（Peer-to-Peer，P2P）" class="headerlink" title="点对点结构（Peer-to-Peer，P2P）"></a>点对点结构（Peer-to-Peer，P2P）</h3><p><img src="https://i.postimg.cc/PfymmrRN/screenshot-2.png" alt="p2p"></p>
+<p>​        没有永久在线的服务器，任意结点之间可以直接通讯，结点间歇性接入网络、可以改变IP地址，如BT服务。</p>
+<p>​        优点：高度可伸缩</p>
+<p>​        缺点：难于管理</p>
+<h3 id="混合结构"><a href="#混合结构" class="headerlink" title="混合结构"></a>混合结构</h3><p>​        将上述两种结构混合使用，不同功能使用不同的结构。</p>
+<h2 id="网络应用进程通信"><a href="#网络应用进程通信" class="headerlink" title="网络应用进程通信"></a>网络应用进程通信</h2><p>进程：主机上运行的程序</p>
+<p>同一主机上的进程之间的通信由操作系统提供</p>
+<p>不同主机上的进程之间进行通信需要通过消息交换</p>
+<p><strong>客户机进程</strong>：发起通信的进程</p>
+<p><strong>服务器进程</strong>：等待通信请求的进程</p>
+<p>进程之间通信利用<strong>套接字（Socket）</strong>发送/接收消息，Socket是由操作系统提供的网络操作的API</p>
+<h3 id="进程寻址"><a href="#进程寻址" class="headerlink" title="进程寻址"></a>进程寻址</h3><p>寻址主机：IP地址</p>
+<p>区分主机上的不同进程：端口号（Port number）</p>
+<p>有一些固定的端口：</p>
+<p>​        HTTP Service： 80</p>
+<p>​        Mail Service： 25</p>
+<p>进程的标识符： <strong>IP地址+端口号</strong></p>
+<h3 id="应用层协议"><a href="#应用层协议" class="headerlink" title="应用层协议"></a>应用层协议</h3><p>网络应用需要遵循应用层协议。</p>
+<p>公开协议：由RFC定义，运行互操作，如HTTP等</p>
+<p>私有协议：多数P2P文件共享应用</p>
+<p>应用层协议内容：</p>
+<p>​        消息的类型：请求消息、响应消息</p>
+<p>​        语法</p>
+<p>​        语义</p>
+<p>​        规则：如何时发送/响应消息</p>
+<h2 id="网络应用需求"><a href="#网络应用需求" class="headerlink" title="网络应用需求"></a>网络应用需求</h2><h3 id="数据丢失（data-loss）-可靠性（reliability）"><a href="#数据丢失（data-loss）-可靠性（reliability）" class="headerlink" title="数据丢失（data loss）/可靠性（reliability）"></a>数据丢失（data loss）/可靠性（reliability）</h3><p>某些网络应用容忍一定数据丢失，如网络电话、视频服务</p>
+<p>某些网络应用要求可靠的数据传输，如文件传输</p>
+<h3 id="时间（timing）-延迟（delay）"><a href="#时间（timing）-延迟（delay）" class="headerlink" title="时间（timing）/延迟（delay）"></a>时间（timing）/延迟（delay）</h3><p>某些应用需要足够低的延迟，如网络电话、网络游戏</p>
+<h3 id="带宽（bandwidth）"><a href="#带宽（bandwidth）" class="headerlink" title="带宽（bandwidth）"></a>带宽（bandwidth）</h3><p>某些应用有带宽要求，如网络视频</p>
+<p>某些应用可以适应任何带宽，如下载、Email</p>
+<p><img src="https://i.postimg.cc/3N1QnDDL/screenshot-2.png" alt="不同网络应用的要求"></p>
+<h3 id="Internet提供的传输服务"><a href="#Internet提供的传输服务" class="headerlink" title="Internet提供的传输服务"></a>Internet提供的传输服务</h3><h4 id="TCP服务"><a href="#TCP服务" class="headerlink" title="TCP服务"></a>TCP服务</h4><p>面向连接</p>
+<p>可靠传输</p>
+<p>流量控制</p>
+<p>拥塞控制</p>
+<p>不提供时间/延迟保障</p>
+<p>不提供最小带宽保障</p>
+<h4 id="UDP服务"><a href="#UDP服务" class="headerlink" title="UDP服务"></a>UDP服务</h4><p>无连接</p>
+<p>不可靠的数据传输</p>
+<p>也不提供TCP中提到的其他保障</p>
+<p><img src="https://i.postimg.cc/wjcbCsxH/screenshot-2.png" alt="典型的网络应用与依赖的Internet服务"></p>
+<h2 id="Web应用"><a href="#Web应用" class="headerlink" title="Web应用"></a>Web应用</h2><p>World Wide Web： Tim Berners-Lee</p>
+<p>通过URL寻址Web对象： Scheme：// host：port / path</p>
+<h3 id="HTTP协议"><a href="#HTTP协议" class="headerlink" title="HTTP协议"></a>HTTP协议</h3><p>C/S结构，客户——浏览器，服务器——Web服务器</p>
+<p>使用TCP传输协议</p>
+<p>无状态协议：服务器不维护任何有关客户端过去所发送的请求的信息</p>
+<h4 id="HTTP连接"><a href="#HTTP连接" class="headerlink" title="HTTP连接"></a>HTTP连接</h4><h5 id="非持久性连接"><a href="#非持久性连接" class="headerlink" title="非持久性连接"></a>非持久性连接</h5><p>每个TCP连接最多允许传输一个对象，HTTP1.0版本</p>
+<p>服务器在发出响应消息后关闭TCP连接，如果客户端还有需要的信息，需要重新建立TCP连接。</p>
+<p><img src="https://i.postimg.cc/zXmkjXwr/screenshot-2.png" alt="非持久性HTTP连接"></p>
+<p>总时间为两个RTT加上文件发送时间</p>
+<p>问题：每个对象都需要两个RTT，资源浪费，浏览器会打开多个并行的TCP连接以节约时间，会给服务器端造成过大压力</p>
+<h5 id="持久性连接"><a href="#持久性连接" class="headerlink" title="持久性连接"></a>持久性连接</h5><p>每个TCP连接允许传输多个对象，HTTP1.1版本默认</p>
+<p>服务器发送响应后，保持TCP连接的打开，后续的HTTP消息可以继续通过这个连接发送</p>
+<p>无流水线的持久性连接：客户端收到前一个响应再发送新的请求，每个对象耗时一个RTT</p>
+<p>有流水线机制的持久性连接：HTTP1.1的默认选项，客户端只要遇到一个引用对象就尽快发出请求，理想状况下，收到所有对象只需要1个RTT</p>
+<h4 id="HTTP消息格式"><a href="#HTTP消息格式" class="headerlink" title="HTTP消息格式"></a>HTTP消息格式</h4><h5 id="HTTP请求报文"><a href="#HTTP请求报文" class="headerlink" title="HTTP请求报文"></a>HTTP请求报文</h5><p>ASCII编码</p>
+<p>例子：</p>
+<p><img src="https://i.postimg.cc/RZSp7Z90/screenshot-2.png" alt="HTTP消息例子"></p>
+<p><img src="https://i.postimg.cc/44w9Kf8P/screenshot-2.png" alt="HTTP消息格式"></p>
+<p>上传输入的方法：POST方法，在请求消息的实体主体中上传；URL方法，使用GET方法，输入消息通过URL字段上传</p>
+<p>HTTP1.0：GET，POST，HEAD（请浏览器不要将请求的对象放入响应消息中）</p>
+<p>HTTP1.1：GET，POST，HEAD，PUT，DELETE</p>
+<h5 id="HTTP响应消息"><a href="#HTTP响应消息" class="headerlink" title="HTTP响应消息"></a>HTTP响应消息</h5><p><img src="https://i.postimg.cc/G2TT6GPm/screenshot-2.png" alt="HTTP响应消息例子"></p>
+<p><img src="https://i.postimg.cc/JhwfbWTY/screenshot-2.png" alt="HTTP响应报文"></p>
+<h5 id="HTTP响应状态代码"><a href="#HTTP响应状态代码" class="headerlink" title="HTTP响应状态代码"></a>HTTP响应状态代码</h5><p>200 OK</p>
+<p>301 Moved Permanently</p>
+<p>400 Bad Request</p>
+<p>404 Not Found</p>
+<p>505 HTTP Version Not Supported</p>
+<h3 id="Cookie技术"><a href="#Cookie技术" class="headerlink" title="Cookie技术"></a>Cookie技术</h3><p>HTTP为无状态协议，但很多应用需要服务器掌握客户端的状态，如网上购物。</p>
+<p>Cookie技术为某些网站为了辨别用户身份、进行session跟踪而存储在<strong>用户本地终端</strong>上的数据（通常加密）</p>
+<p>Cookie组件：HTTP请求和响应消息的Cookie头部行、保存在客户端主机上的Cookie文件、Web服务器上的数据库</p>
+<p><img src="https://i.postimg.cc/VNzXM6Ck/screenshot-2.png" alt="Cookie"></p>
+<p>可以用于身份认证、购物车、推荐、Email等</p>
+<p>问题：隐私</p>
+<h3 id="Web缓存-代理服务器（proxy-server）技术"><a href="#Web缓存-代理服务器（proxy-server）技术" class="headerlink" title="Web缓存/代理服务器（proxy server）技术"></a>Web缓存/代理服务器（proxy server）技术</h3><p>功能：在不访问服务器的前提下满足客户端的HTTP请求</p>
+<p>优点：缩短客户请求的响应时间、减少机构/组织的流量开销、在大范围内实现有效的内容分发（CDN）</p>
+<p><img src="https://i.postimg.cc/xTYsg0HB/screenshot-2.png" alt="proxy"></p>
+<p>浏览器向缓存/代理服务器发送所有的HTTP请求,如果所请求的对象在缓存中,则返还缓存对象;否则,缓存服务器向原始服务器发送HTTP请求,获取对象,并把对象保存以及返回给客户端.</p>
+<p>一般由ISP架设,即充当客户端,又充当服务器</p>
+<h4 id="条件性GET方法"><a href="#条件性GET方法" class="headerlink" title="条件性GET方法"></a>条件性GET方法</h4><p>目标:如何缓存有最新的版本,则不需要发送请求对象</p>
+<p>缓存:在HTTP请求中声明所持有版本的日期</p>
+<p><img src="https://i.postimg.cc/mDYn2hCN/screenshot-2.png" alt="条件GET"></p>
+</div><div class="post-copyright"><blockquote><p>Original author: 马旭</p><p>Original link: <a href="https://bhmaxu.github.io/2020/01/28/计算机网络（2）-应用层 （part1）/">https://bhmaxu.github.io/2020/01/28/计算机网络（2）-应用层 （part1）/</a></p><p>Copyright Notice: Please indicate the source of the reprint (must retain the author's signature and link)</p></blockquote></div><div class="tags"><a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a></div><div class="post-share"><div class="social-share"><span>Share:</span></div></div><div class="post-nav"><a href="/2020/01/28/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%883%EF%BC%89-%E5%BA%94%E7%94%A8%E5%B1%82%EF%BC%88part2%EF%BC%89/" class="pre">计算机网络（3）-应用层（part2）</a><a href="/2020/01/27/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%881%EF%BC%89-%E6%A6%82%E8%BF%B0/" class="next">计算机网络（1）-概述</a></div><div id="comments"></div></div></div></div><div class="layout-r"><div id="sidebar"><div class="search-pla"></div><div id="toc" class="widget"><div class="widget-title"><i class="fa fa-fei">Contents</i></div><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#网络应用的体系结构"><span class="toc-text">网络应用的体系结构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#客户机-服务器结构（Client-Service，C-S）"><span class="toc-text">客户机&#x2F;服务器结构（Client-Service，C&#x2F;S）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#点对点结构（Peer-to-Peer，P2P）"><span class="toc-text">点对点结构（Peer-to-Peer，P2P）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#混合结构"><span class="toc-text">混合结构</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#网络应用进程通信"><span class="toc-text">网络应用进程通信</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#进程寻址"><span class="toc-text">进程寻址</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#应用层协议"><span class="toc-text">应用层协议</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#网络应用需求"><span class="toc-text">网络应用需求</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#数据丢失（data-loss）-可靠性（reliability）"><span class="toc-text">数据丢失（data loss）&#x2F;可靠性（reliability）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#时间（timing）-延迟（delay）"><span class="toc-text">时间（timing）&#x2F;延迟（delay）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#带宽（bandwidth）"><span class="toc-text">带宽（bandwidth）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Internet提供的传输服务"><span class="toc-text">Internet提供的传输服务</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#TCP服务"><span class="toc-text">TCP服务</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#UDP服务"><span class="toc-text">UDP服务</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Web应用"><span class="toc-text">Web应用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#HTTP协议"><span class="toc-text">HTTP协议</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#HTTP连接"><span class="toc-text">HTTP连接</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#非持久性连接"><span class="toc-text">非持久性连接</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#持久性连接"><span class="toc-text">持久性连接</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#HTTP消息格式"><span class="toc-text">HTTP消息格式</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#HTTP请求报文"><span class="toc-text">HTTP请求报文</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#HTTP响应消息"><span class="toc-text">HTTP响应消息</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#HTTP响应状态代码"><span class="toc-text">HTTP响应状态代码</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Cookie技术"><span class="toc-text">Cookie技术</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Web缓存-代理服务器（proxy-server）技术"><span class="toc-text">Web缓存&#x2F;代理服务器（proxy server）技术</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#条件性GET方法"><span class="toc-text">条件性GET方法</span></a></li></ol></li></ol></li></ol></div><div class="widget"><div class="widget-title"><i class="fa fa-xie"> Recent</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2020/03/05/%E7%96%AB%E6%83%85%E6%9C%9F%E9%97%B4%E7%9A%84%E8%87%AA%E6%88%91%E5%8F%8D%E6%80%9D/">疫情期间的自我反思</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/11/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%8810%EF%BC%89-%E5%B1%80%E5%9F%9F%E7%BD%91/">计算机网络（10）-局域网</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/11/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%882%EF%BC%89/">设计模式（2）</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/10/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%881%EF%BC%89/">设计模式（1）</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%889%EF%BC%89-%E9%93%BE%E8%B7%AF%E5%B1%82/">计算机网络（9）-链路层</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%888%EF%BC%89-%E7%BD%91%E7%BB%9C%E5%B1%82%EF%BC%88part3%EF%BC%89/">计算机网络（8）-网络层（part3）</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%887%EF%BC%89-%E7%BD%91%E7%BB%9C%E5%B1%82%EF%BC%88part2%EF%BC%89/">计算机网络（7）-网络层（part2）</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/09/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%886%EF%BC%89-%E7%BD%91%E7%BB%9C%E5%B1%82%EF%BC%88part1%EF%BC%89/">计算机网络（6）-网络层（part1）</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/08/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%885%EF%BC%89-%E4%BC%A0%E8%BE%93%E5%B1%82%EF%BC%88part2%EF%BC%89/">计算机网络（5）-传输层（part2）</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/01/29/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%884%EF%BC%89-%E4%BC%A0%E8%BE%93%E5%B1%82%EF%BC%88part1%EF%BC%89/">计算机网络（4）-传输层（part1）</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-biao"> Tags</i></div><div class="tagcloud"><a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" style="font-size: 15px;">计算机网络</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 15px;">设计模式</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-archive"> Archive</i></div><ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/">2020</a><span class="archive-list-count">13</span></li></ul></div></div></div></div><a id="totop" href="#top"></a><div id="footer"><div class="footer-info"><p><a href="/baidusitemap.xml">Site Map</a> |  <a href="/atom.xml">Subscribe to this site</a> |  <a href="/about/">Contact the blogger</a></p><p>本站总访问量：<i id="busuanzi_container_site_pv"><i id="busuanzi_value_site_pv"></i></i>次，本站总访客数:<i id="busuanzi_container_site_uv"><i id="busuanzi_value_site_uv"></i></i>人</p><p><span> Copyright &copy;<a href="/." rel="nofollow">马旭.</a></span><span> Theme by<a rel="nofollow" target="_blank" href="https://github.com/chaooo/hexo-theme-BlueLake"> BlueLake.</a></span><span> Count by<a href="http://busuanzi.ibruce.info/" target="_blank" rel="noopener"> busuanzi.</a></span><span> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a></span></p></div></div></div><script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script><script type="text/javascript" src="/js/search.json.js?v=2.0.4"></script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  }
+});</script><script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML" async></script><script type="text/javascript" src="/js/toctotop.js?v=2.0.4" async></script><link rel="stylesheet" type="text/css" href="/share/css/share.css"><script type="text/javascript" src="/share/js/social-share.js" charset="utf-8"></script><script type="text/javascript" src="/share/js/qrcode.js" charset="utf-8"></script></body></html>

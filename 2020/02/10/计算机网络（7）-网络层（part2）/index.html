@@ -1,0 +1,98 @@
+<!DOCTYPE html><html lang="en"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=""><link rel="stylesheet" type="text/css" href="//fonts.loli.net/css?family=Source+Code+Pro"><link rel="stylesheet" type="text/css" href="/css/style.css?v=2.0.4"><link rel="stylesheet" type="text/css" href="/css/highlight.css?v=2.0.4"><link rel="Shortcut Icon" href="/favicon.ico"><link rel="bookmark" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><title>计算机网络（7）-网络层（part2） | 马旭的博客</title><meta name="generator" content="Hexo 4.2.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">计算机网络（7）-网络层（part2）</h1><a id="logo" href="/.">马旭的博客</a><p class="description"></p></div><div id="nav-menu"><a href="/." class="current"><i class="fa fa-home"> Home</i></a><a href="/archives/"><i class="fa fa-archive"> Archive</i></a><a href="/about-me/"><i class="fa fa-user"> About</i></a></div><div id="search-form"><div id="result-mask" class="hide"></div><label><input id="search-key" type="text" autocomplete="off" placeholder="search"></label><div id="result-wrap" class="hide"><div id="search-result"></div></div><div class="hide"><template id="search-tpl"><div class="item"><a href="/{path}" title="{title}"><div class="title">{title}</div><div class="time">{date}</div><div class="tags">{tags}</div></a></div></template></div></div></div><div id="layout" class="layout-g"><div class="layout-l"><div class="content_container"><div class="post"><h1 class="post-title">计算机网络（7）-网络层（part2）</h1><div class="post-meta"><a href="/2020/02/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%887%EF%BC%89-%E7%BD%91%E7%BB%9C%E5%B1%82%EF%BC%88part2%EF%BC%89/#comments" class="comment-count"></a><p><span class="date">Feb 10, 2020</span><span><i id="busuanzi_container_page_pv"><i id="busuanzi_value_page_pv"></i><i>Hits</i></i></span></p></div><div class="post-content"><h2 id="CIDR（无类域间路由，Classless-InterDomain-Routing）"><a href="#CIDR（无类域间路由，Classless-InterDomain-Routing）" class="headerlink" title="CIDR（无类域间路由，Classless InterDomain Routing）"></a>CIDR（无类域间路由，Classless InterDomain Routing）</h2><p>消除传统A类、B类等地址界限</p>
+<p>NetId+SubID -&gt; Network Prefix <strong>可以任意长度</strong></p>
+<p>融合子网地址与子网掩码</p>
+<p>a.b.c.d/x，其中x为前缀长度</p>
+<p>好处：</p>
+<ul>
+<li>提高地址空间分配效率</li>
+<li>提高路由效率，将很多子网聚合成一个较大的子网，构造超网（前缀长度小于原规定的网络号），<strong>路由聚合</strong></li>
+</ul>
+<p>如果出现子网不连续分配，导致超网出现不合法的域，路由器应该把超网和不属于的子网都记录到路由表中，实际工作时匹配长的（地址更具体的）</p>
+<h2 id="DHCP协议"><a href="#DHCP协议" class="headerlink" title="DHCP协议"></a>DHCP协议</h2><p>获得IP地址的方法：</p>
+<ul>
+<li>硬编码，静态配置</li>
+<li>动态配置，DHCP协议，Dynamic Host Configuration Protocol，从服务器动态获取IP地址、子网掩码、默认网关地址、DNS服务器，DHCP协议允许地址重用，支持移动用户加入网络</li>
+</ul>
+<p>主机广播DHCP discover报文</p>
+<p>DHCP服务器用DHCP offer报文响应</p>
+<p>主机用DHCP request报文请求IP地址</p>
+<p>DHCP服务器用DHCP ack确认分配IP地址</p>
+<p>DHCP协议在应用层实现，请求报文封装到UDP数据段中</p>
+<h2 id="NAT（网络地址转换）"><a href="#NAT（网络地址转换）" class="headerlink" title="NAT（网络地址转换）"></a>NAT（网络地址转换）</h2><p>本地网络中使用私有地址的主机向公网通信时，需要进行地址替换</p>
+<p>动机：</p>
+<ul>
+<li>一个网络只能从ISP申请一个地址</li>
+<li>本地网络设备IP地址的变更不需要通告外界网络</li>
+<li>变更ISP时，无需修改内部网络设备IP地址</li>
+<li>内部网络设备对外界网络不可见，无法直接寻址，提高安全性</li>
+</ul>
+<p>实现：</p>
+<ul>
+<li>替换。替换源IP地址和源端口号</li>
+<li>记录。记录替换关系</li>
+</ul>
+<p>使用16bit的端口号字段，可以同时支持65536个并行连接</p>
+<p>主要争议：</p>
+<ul>
+<li>路由器应该只处理第三层功能（端口号为传输层段的内容，路由器对其进行了修改）</li>
+<li>违背端到端原则，如P2P应用必须考虑NAT的存在</li>
+</ul>
+<h2 id="ICMP协议（互联网报文控制）"><a href="#ICMP协议（互联网报文控制）" class="headerlink" title="ICMP协议（互联网报文控制）"></a>ICMP协议（互联网报文控制）</h2><p>功能：</p>
+<ul>
+<li>差错报告</li>
+<li>网络探寻</li>
+</ul>
+<p>两类ICMP报文：</p>
+<ul>
+<li>差错报告报文：目的不可达、源抑制（拥塞控制，希望源主机降低速度）、超时（TTL超时）、参数问题、重定向</li>
+<li>网络探寻：回声请求与应答报文（探测网络是否可达，ping）、时间戳请求与应答报文</li>
+</ul>
+<p>不发生ICMP差错报告报文的特殊情况：</p>
+<ul>
+<li>ICMP差错报文发生错误</li>
+<li>IP数据报分片时只发送第一个片</li>
+<li>多播IP数据报</li>
+<li>特殊地址（127.0.0.0 或 0.0.0.0）</li>
+</ul>
+<p>ICMP报文封装到IP数据报中传输</p>
+<h2 id="IPv6"><a href="#IPv6" class="headerlink" title="IPv6"></a>IPv6</h2><p>动机：</p>
+<ul>
+<li>IPv4地址空间分配殆尽</li>
+<li>改进首部格式</li>
+</ul>
+<p>数据报格式：</p>
+<ul>
+<li>固定长度40字节的基本首部，可以有多个扩展首部（扩展首部和数据统称载荷）</li>
+<li>不允许分片</li>
+</ul>
+<p><img src="https://i.postimg.cc/mgn3K9wj/screenshot-56.png" alt=""></p>
+<p>版本：兼容IPv4</p>
+<p>流标签：标识数据报流</p>
+<p>载荷长度：扩展首部加数据</p>
+<p>下一个首部：指向下一个扩展首部或上一层协议的首部（如TCP首部）</p>
+<p>跳步限制：TTL</p>
+<p>源地址、目的地址：128位</p>
+<p>改变：</p>
+<ul>
+<li>校验和移除，减少每跳处理时间</li>
+<li>允许选项，但从基本首部移除</li>
+<li>新版ICMP协议，增加报文类型，如分组过大（不支持分片），多播组管理功能</li>
+</ul>
+<p>地址表现形式：</p>
+<p>按16比特分割，用冒号分开，16进制表示，连续的0用连续两个冒号压缩</p>
+<p><img src="https://i.postimg.cc/xT3NKzh8/screenshot-57.png" alt=""></p>
+<p>基本地址类型：</p>
+<ul>
+<li>单播</li>
+<li>多播，广播被定义为特殊的多播</li>
+<li>任意播，一对一组中之一</li>
+</ul>
+<p>v4向v6过渡：</p>
+<p><strong>隧道</strong>：v6数据报作为v4的载荷</p>
+</div><div class="post-copyright"><blockquote><p>Original author: 马旭</p><p>Original link: <a href="https://bhmaxu.github.io/2020/02/10/计算机网络（7）-网络层（part2）/">https://bhmaxu.github.io/2020/02/10/计算机网络（7）-网络层（part2）/</a></p><p>Copyright Notice: Please indicate the source of the reprint (must retain the author's signature and link)</p></blockquote></div><div class="tags"><a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a></div><div class="post-share"><div class="social-share"><span>Share:</span></div></div><div class="post-nav"><a href="/2020/02/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%888%EF%BC%89-%E7%BD%91%E7%BB%9C%E5%B1%82%EF%BC%88part3%EF%BC%89/" class="pre">计算机网络（8）-网络层（part3）</a><a href="/2020/02/09/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%886%EF%BC%89-%E7%BD%91%E7%BB%9C%E5%B1%82%EF%BC%88part1%EF%BC%89/" class="next">计算机网络（6）-网络层（part1）</a></div><div id="comments"></div></div></div></div><div class="layout-r"><div id="sidebar"><div class="search-pla"></div><div id="toc" class="widget"><div class="widget-title"><i class="fa fa-fei">Contents</i></div><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#CIDR（无类域间路由，Classless-InterDomain-Routing）"><span class="toc-text">CIDR（无类域间路由，Classless InterDomain Routing）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DHCP协议"><span class="toc-text">DHCP协议</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NAT（网络地址转换）"><span class="toc-text">NAT（网络地址转换）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ICMP协议（互联网报文控制）"><span class="toc-text">ICMP协议（互联网报文控制）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IPv6"><span class="toc-text">IPv6</span></a></li></ol></div><div class="widget"><div class="widget-title"><i class="fa fa-xie"> Recent</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2020/03/05/%E7%96%AB%E6%83%85%E6%9C%9F%E9%97%B4%E7%9A%84%E8%87%AA%E6%88%91%E5%8F%8D%E6%80%9D/">疫情期间的自我反思</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/11/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%8810%EF%BC%89-%E5%B1%80%E5%9F%9F%E7%BD%91/">计算机网络（10）-局域网</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/11/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%882%EF%BC%89/">设计模式（2）</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/10/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%881%EF%BC%89/">设计模式（1）</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%889%EF%BC%89-%E9%93%BE%E8%B7%AF%E5%B1%82/">计算机网络（9）-链路层</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%888%EF%BC%89-%E7%BD%91%E7%BB%9C%E5%B1%82%EF%BC%88part3%EF%BC%89/">计算机网络（8）-网络层（part3）</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%887%EF%BC%89-%E7%BD%91%E7%BB%9C%E5%B1%82%EF%BC%88part2%EF%BC%89/">计算机网络（7）-网络层（part2）</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/09/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%886%EF%BC%89-%E7%BD%91%E7%BB%9C%E5%B1%82%EF%BC%88part1%EF%BC%89/">计算机网络（6）-网络层（part1）</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/08/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%885%EF%BC%89-%E4%BC%A0%E8%BE%93%E5%B1%82%EF%BC%88part2%EF%BC%89/">计算机网络（5）-传输层（part2）</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/01/29/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%884%EF%BC%89-%E4%BC%A0%E8%BE%93%E5%B1%82%EF%BC%88part1%EF%BC%89/">计算机网络（4）-传输层（part1）</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-biao"> Tags</i></div><div class="tagcloud"><a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" style="font-size: 15px;">计算机网络</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 15px;">设计模式</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-archive"> Archive</i></div><ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/">2020</a><span class="archive-list-count">13</span></li></ul></div></div></div></div><a id="totop" href="#top"></a><div id="footer"><div class="footer-info"><p><a href="/baidusitemap.xml">Site Map</a> |  <a href="/atom.xml">Subscribe to this site</a> |  <a href="/about/">Contact the blogger</a></p><p>本站总访问量：<i id="busuanzi_container_site_pv"><i id="busuanzi_value_site_pv"></i></i>次，本站总访客数:<i id="busuanzi_container_site_uv"><i id="busuanzi_value_site_uv"></i></i>人</p><p><span> Copyright &copy;<a href="/." rel="nofollow">马旭.</a></span><span> Theme by<a rel="nofollow" target="_blank" href="https://github.com/chaooo/hexo-theme-BlueLake"> BlueLake.</a></span><span> Count by<a href="http://busuanzi.ibruce.info/" target="_blank" rel="noopener"> busuanzi.</a></span><span> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a></span></p></div></div></div><script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script><script type="text/javascript" src="/js/search.json.js?v=2.0.4"></script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  }
+});</script><script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML" async></script><script type="text/javascript" src="/js/toctotop.js?v=2.0.4" async></script><link rel="stylesheet" type="text/css" href="/share/css/share.css"><script type="text/javascript" src="/share/js/social-share.js" charset="utf-8"></script><script type="text/javascript" src="/share/js/qrcode.js" charset="utf-8"></script></body></html>

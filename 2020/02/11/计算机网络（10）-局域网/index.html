@@ -1,0 +1,158 @@
+<!DOCTYPE html><html lang="en"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=""><link rel="stylesheet" type="text/css" href="//fonts.loli.net/css?family=Source+Code+Pro"><link rel="stylesheet" type="text/css" href="/css/style.css?v=2.0.4"><link rel="stylesheet" type="text/css" href="/css/highlight.css?v=2.0.4"><link rel="Shortcut Icon" href="/favicon.ico"><link rel="bookmark" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><title>计算机网络（10）-局域网 | 马旭的博客</title><meta name="generator" content="Hexo 4.2.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">计算机网络（10）-局域网</h1><a id="logo" href="/.">马旭的博客</a><p class="description"></p></div><div id="nav-menu"><a href="/." class="current"><i class="fa fa-home"> Home</i></a><a href="/archives/"><i class="fa fa-archive"> Archive</i></a><a href="/about-me/"><i class="fa fa-user"> About</i></a></div><div id="search-form"><div id="result-mask" class="hide"></div><label><input id="search-key" type="text" autocomplete="off" placeholder="search"></label><div id="result-wrap" class="hide"><div id="search-result"></div></div><div class="hide"><template id="search-tpl"><div class="item"><a href="/{path}" title="{title}"><div class="title">{title}</div><div class="time">{date}</div><div class="tags">{tags}</div></a></div></template></div></div></div><div id="layout" class="layout-g"><div class="layout-l"><div class="content_container"><div class="post"><h1 class="post-title">计算机网络（10）-局域网</h1><div class="post-meta"><a href="/2020/02/11/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%8810%EF%BC%89-%E5%B1%80%E5%9F%9F%E7%BD%91/#comments" class="comment-count"></a><p><span class="date">Feb 11, 2020</span><span><i id="busuanzi_container_page_pv"><i id="busuanzi_value_page_pv"></i><i>Hits</i></i></span></p></div><div class="post-content"><h2 id="MAC地址"><a href="#MAC地址" class="headerlink" title="MAC地址"></a>MAC地址</h2><p>IP地址：</p>
+<ul>
+<li>接口的网络层地址</li>
+<li>用于标识网络层分组，支持分组转发</li>
+</ul>
+<p>MAC地址（物理地址，LAN地址，以太网地址）：</p>
+<ul>
+<li>链路层标识一个帧从哪个接口发出，到达哪个物理相连的其他地址</li>
+<li>48位MAC地址，固化在网卡ROM中，有时也可软件设置</li>
+<li>局域网中每块网卡都有唯一的MAC地址</li>
+<li>由IEEE统一管理与分配</li>
+</ul>
+<h2 id="ARP（地址解析协议）"><a href="#ARP（地址解析协议）" class="headerlink" title="ARP（地址解析协议）"></a>ARP（地址解析协议）</h2><p><strong>ARP表</strong>：LAN中每个IP结点（主机、路由器）维护一个表：</p>
+<ul>
+<li>存储某些LAN结点的IP/MAC映射关系</li>
+<li>TTL（time to live），经过该时间后该映射关系会被遗弃，因为IP地址不是确定的</li>
+</ul>
+<p>在一个局域网内，当需要没有存储的映射关系时，广播ARP查询分组，广播时MAC地址设为全1，对应结点接收查询分组时，向查询者响应其MAC地址（单播）</p>
+<p>需要跨越路由器时，已知需要转化的IP地址、第一跳路由器IP地址（默认网关）、第一跳路由器MAC地址（一个局域网内ARP协议），在起点封装链路层数据帧时，MAC地址为第一跳路由器MAC地址，路由器接收数据帧后，提取网络层数据报，交给网络层处理，然后封装到新的链路层数据帧，发送到下一跳路由器，以此类推。</p>
+<h2 id="以太网（Ethernet）"><a href="#以太网（Ethernet）" class="headerlink" title="以太网（Ethernet）"></a>以太网（Ethernet）</h2><p>统治地位的有线LAN技术，造价低廉，应用广泛，比令牌局域网和ATM等简单、便宜，可以满足网络速率需求</p>
+<p>总线（bus）网络：上世纪90年代中期前流行，使用一条同轴电缆形式的总线连接所有结点，彼此可能冲突</p>
+<p>星型：目前主流网络拓扑，利用交换机（switch），有一个中心交换机，结点间彼此不冲突</p>
+<p>以太网提供不可靠、无连接的服务</p>
+<ul>
+<li>发送帧的网卡和接收帧的网卡没有握手过程</li>
+<li>接收网卡不向发送网卡进行确认，差错帧直接丢弃，数据恢复依靠高层协议（如TCP）</li>
+<li>以太网采用二进制指数退避算法的CSMA/CD协议</li>
+</ul>
+<h3 id="以太网CSMA-CD协议"><a href="#以太网CSMA-CD协议" class="headerlink" title="以太网CSMA/CD协议"></a>以太网CSMA/CD协议</h3><ul>
+<li>网卡从网络层接收数据报，创建数据帧</li>
+<li>监听信道，如果信道空闲，则开始发送帧；</li>
+<li>如果信道忙，则一直等待到信道空闲，然后发送帧</li>
+<li>网卡发送完整个帧，没有检测到其他结点的数据发送，则网卡确认帧发送成功</li>
+<li>如果检测到其他结点传输数据，则终止发送，并发送阻塞信号</li>
+<li>终止发送后，网卡进入<strong>二进制指数退避</strong>：第m次冲突，取n=max（m，10），从（0，1，…，$ 2^n-1 $）中随机取一个数k，网卡等待k*512比特的传输延迟时间，再重新开始监听信道，连续冲突次数越多，平均等待时间越长</li>
+</ul>
+<h3 id="以太网帧结构"><a href="#以太网帧结构" class="headerlink" title="以太网帧结构"></a>以太网帧结构</h3><p>网卡将IP数据报封装到以太网帧中</p>
+<p>前导码：8byte，前7个字节为10101010，第8字节为10101011，用于发送端和接收端时钟同步</p>
+<p>目的MAC地址、源MAC地址：各6byte，全1为广播地址</p>
+<p>类型：2byte，指示封装的是哪种高层协议的分组</p>
+<p>数据：46-1500byte</p>
+<p>CRC：4byte</p>
+<h3 id="以太网标准"><a href="#以太网标准" class="headerlink" title="以太网标准"></a>以太网标准</h3><p>许多不同的以太网标准：</p>
+<ul>
+<li>相同MAC协议和帧格式</li>
+<li>不同速率</li>
+<li>不同物理介质</li>
+</ul>
+<h3 id="以太网交换机"><a href="#以太网交换机" class="headerlink" title="以太网交换机"></a>以太网交换机</h3><p>链路层设备</p>
+<ul>
+<li>存储、转发以太网帧</li>
+<li>检验到达帧目的的MAC地址，选择性向一个或多个输出链路转发帧</li>
+<li>利用CSMA/CD协议</li>
+</ul>
+<p>常用透明（transparent）交换机</p>
+<ul>
+<li>主机感知不到交换机的存在</li>
+<li>即插即用</li>
+<li>自学习</li>
+</ul>
+<p>主机利用独享链路直接连接交换机</p>
+<p>交换机实现帧缓存与转发</p>
+<p>在每段链路上使用CSMA/CD协议，但无冲突，且可以全双工</p>
+<p>不同链路可以并行传输</p>
+<p>交换机维护转发表（交换表），每个入口记录主机MAC地址、到达主机的接口、时间戳</p>
+<p>交换机通过自学习获知到达主机的接口信息，收到数据帧时，交换机得知MAC地址和到达接口的对应关系，记录到交换表中，然后查找表进行转发。如果源MAC地址和目的MAC地址位于相同的网段，则丢弃数据帧，不需要转发；如果在交换表中没有找到，则泛洪转发，转发到除接收接口之外的所有接口上。</p>
+<p>交换机可以互联（层级连接，一个中心交换机连接其他的交换机）</p>
+<p>交换机和路由器对比：</p>
+<ul>
+<li>都是存储-转发设备</li>
+<li>路由器为网络层设备，处理网络层数据报</li>
+<li>交换机为链路层设备，处理链路层帧</li>
+<li>二者都使用转发表，路由器利用路由算法计算得到，交换机利用自学习、泛洪构建转发表</li>
+</ul>
+<h3 id="虚拟局域网（VLAN）"><a href="#虚拟局域网（VLAN）" class="headerlink" title="虚拟局域网（VLAN）"></a>虚拟局域网（VLAN）</h3><p>不使用路由器隔离广播域</p>
+<p>物理LAN的基础上配置、定义多个VLAN</p>
+<p>单一物理交换机的端口分开，就像多个交换机一样</p>
+<ul>
+<li>流量隔离，分隔的端口只能在范围内广播</li>
+<li>也可以基于MAC地址划分</li>
+<li>动态成员，不需要改动物理线路</li>
+<li>VLAN之间转发，需要使用路由器，厂家会将交换机和路由器集成在一起</li>
+</ul>
+<p>VLAN如果要跨越多交换机划分：</p>
+<ul>
+<li>多线缆连接，每个线缆连接一个VLAN</li>
+<li>中继端口，连接两个物理交换机，传输跨越交换机的VLAN的帧（需要携带VLAN ID，802.1q协议，在标准以太网帧的基础上插入标记协议ID和控制信息的部分）</li>
+</ul>
+<h2 id="PPP协议"><a href="#PPP协议" class="headerlink" title="PPP协议"></a>PPP协议</h2><p>点对点数据链路控制</p>
+<ul>
+<li>不存在介质访问控制</li>
+<li>无需MAC寻址</li>
+<li>如，拨号链路，ISDN链路</li>
+<li>常见协议：HDLC、PPP</li>
+</ul>
+<p>需求：</p>
+<ul>
+<li>组帧，可以承载任何网络层协议分组</li>
+<li>可以向上层实现复用和分用，在数据帧增加字段描述</li>
+<li>比特透明传输，数据域必须支持任何比特模式</li>
+<li>差错检测</li>
+<li>连接活性检测</li>
+<li>网络层地址协商，端结点可以学习/配置彼此网络地址</li>
+</ul>
+<p>不支持功能：</p>
+<ul>
+<li>差错纠正</li>
+<li>流量控制</li>
+<li>不存在乱序交付</li>
+<li>不需要多点链路</li>
+</ul>
+<h3 id="PPP数据帧"><a href="#PPP数据帧" class="headerlink" title="PPP数据帧"></a>PPP数据帧</h3><p>首部和尾部分别flag：01111110，定界符</p>
+<p>地址：无效</p>
+<p>控制：无效</p>
+<p>协议：上层协议，实现复用分用</p>
+<p>信息：上层协议分组</p>
+<p>校验：CRC校验</p>
+<h3 id="字节填充"><a href="#字节填充" class="headerlink" title="字节填充"></a>字节填充</h3><p>透明传输需求：数据域需要允许包含标志模式01111110</p>
+<p>发送端出现上述模式时，在前面进行填充</p>
+<h3 id="协议过程"><a href="#协议过程" class="headerlink" title="协议过程"></a>协议过程</h3><p>在交换数据之前：</p>
+<ul>
+<li>配置PPP链路，最大帧长，身份认证，数据帧中可变部分的长度</li>
+<li>学习/配置网络层信息，对于IP协议，通过IPCP（IP control protocol）协议，完成IP地址等信息的配置</li>
+</ul>
+<h2 id="802-11无线局域网（WIFI）"><a href="#802-11无线局域网（WIFI）" class="headerlink" title="802.11无线局域网（WIFI）"></a>802.11无线局域网（WIFI）</h2><p>802.11b：2.4-2.5GHz免费频段，最高速率为11Mbps，物理层采用直接序列扩频技术（如CDMA，所有主机使用相同的码片序列）</p>
+<p>802.11a：5-6GHz，最高速率54Mbps</p>
+<p>802.11g：2.4-2.5GHz，最高速率54Mbps</p>
+<p>802.11n：多天线技术，2.4-2.5GHz，最高速率600Mbps</p>
+<p>均使用CSMA/CA多路访问控制协议</p>
+<p>均有基站网络模式和自组网网络模式</p>
+<h3 id="体系结构"><a href="#体系结构" class="headerlink" title="体系结构"></a>体系结构</h3><ul>
+<li>无线主机与基站通信（访问点，accesspoint，AP）</li>
+<li>基本服务集（BSS），基站模式包括基站和与基站关联的主机，自组网模式只有主机</li>
+</ul>
+<p>主机必须与某个AP关联（associate），主机扫描信道，AP会定期广播信标（beacon）帧，包含名称（SSID）和MAC地址，使用DHCP等协议配置IP</p>
+<h3 id="多路访问控制"><a href="#多路访问控制" class="headerlink" title="多路访问控制"></a>多路访问控制</h3><p>期望避免冲突</p>
+<p>基于CSMA，发送数据前监听信道</p>
+<p>不能向以太网CSMA/CD那样，边发送、边检测冲突，无线信道很难实现，信号强度衰减很快</p>
+<p>需要避免冲突（Collision Avoidance）</p>
+<h3 id="CSMA-CA协议"><a href="#CSMA-CA协议" class="headerlink" title="CSMA/CA协议"></a>CSMA/CA协议</h3><p>发送方：</p>
+<ul>
+<li>监听信道<strong>空闲了DIFS时间</strong>，发送整个帧（无同时检测冲突，CD）</li>
+<li>如果监听到信道忙，开始随机规避计时，当计时器超时且信道空闲，发送帧</li>
+<li>如果没有收到接收方ACK，增加随机规避间隔时间，重新监听</li>
+</ul>
+<p>接收方：</p>
+<ul>
+<li>如果正确接收帧，延迟SIFS时间（较短）后，向发送端发送ACK</li>
+</ul>
+<p>基本思想：允许发送端预约信道，而不是随机发送数据帧，从而避免长数据帧的冲突</p>
+<p>利用很小的预约帧避免了数据帧的冲突</p>
+</div><div class="post-copyright"><blockquote><p>Original author: 马旭</p><p>Original link: <a href="https://bhmaxu.github.io/2020/02/11/计算机网络（10）-局域网/">https://bhmaxu.github.io/2020/02/11/计算机网络（10）-局域网/</a></p><p>Copyright Notice: Please indicate the source of the reprint (must retain the author's signature and link)</p></blockquote></div><div class="tags"><a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a></div><div class="post-share"><div class="social-share"><span>Share:</span></div></div><div class="post-nav"><a href="/2020/03/05/%E7%96%AB%E6%83%85%E6%9C%9F%E9%97%B4%E7%9A%84%E8%87%AA%E6%88%91%E5%8F%8D%E6%80%9D/" class="pre">疫情期间的自我反思</a><a href="/2020/02/11/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%882%EF%BC%89/" class="next">设计模式（2）</a></div><div id="comments"></div></div></div></div><div class="layout-r"><div id="sidebar"><div class="search-pla"></div><div id="toc" class="widget"><div class="widget-title"><i class="fa fa-fei">Contents</i></div><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#MAC地址"><span class="toc-text">MAC地址</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ARP（地址解析协议）"><span class="toc-text">ARP（地址解析协议）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#以太网（Ethernet）"><span class="toc-text">以太网（Ethernet）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#以太网CSMA-CD协议"><span class="toc-text">以太网CSMA&#x2F;CD协议</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#以太网帧结构"><span class="toc-text">以太网帧结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#以太网标准"><span class="toc-text">以太网标准</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#以太网交换机"><span class="toc-text">以太网交换机</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#虚拟局域网（VLAN）"><span class="toc-text">虚拟局域网（VLAN）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PPP协议"><span class="toc-text">PPP协议</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#PPP数据帧"><span class="toc-text">PPP数据帧</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#字节填充"><span class="toc-text">字节填充</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#协议过程"><span class="toc-text">协议过程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#802-11无线局域网（WIFI）"><span class="toc-text">802.11无线局域网（WIFI）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#体系结构"><span class="toc-text">体系结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多路访问控制"><span class="toc-text">多路访问控制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CSMA-CA协议"><span class="toc-text">CSMA&#x2F;CA协议</span></a></li></ol></li></ol></div><div class="widget"><div class="widget-title"><i class="fa fa-xie"> Recent</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2020/03/05/%E7%96%AB%E6%83%85%E6%9C%9F%E9%97%B4%E7%9A%84%E8%87%AA%E6%88%91%E5%8F%8D%E6%80%9D/">疫情期间的自我反思</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/11/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%8810%EF%BC%89-%E5%B1%80%E5%9F%9F%E7%BD%91/">计算机网络（10）-局域网</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/11/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%882%EF%BC%89/">设计模式（2）</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/10/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%881%EF%BC%89/">设计模式（1）</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%889%EF%BC%89-%E9%93%BE%E8%B7%AF%E5%B1%82/">计算机网络（9）-链路层</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%888%EF%BC%89-%E7%BD%91%E7%BB%9C%E5%B1%82%EF%BC%88part3%EF%BC%89/">计算机网络（8）-网络层（part3）</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%887%EF%BC%89-%E7%BD%91%E7%BB%9C%E5%B1%82%EF%BC%88part2%EF%BC%89/">计算机网络（7）-网络层（part2）</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/09/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%886%EF%BC%89-%E7%BD%91%E7%BB%9C%E5%B1%82%EF%BC%88part1%EF%BC%89/">计算机网络（6）-网络层（part1）</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/08/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%885%EF%BC%89-%E4%BC%A0%E8%BE%93%E5%B1%82%EF%BC%88part2%EF%BC%89/">计算机网络（5）-传输层（part2）</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/01/29/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%884%EF%BC%89-%E4%BC%A0%E8%BE%93%E5%B1%82%EF%BC%88part1%EF%BC%89/">计算机网络（4）-传输层（part1）</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-biao"> Tags</i></div><div class="tagcloud"><a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" style="font-size: 15px;">计算机网络</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 15px;">设计模式</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-archive"> Archive</i></div><ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/">2020</a><span class="archive-list-count">13</span></li></ul></div></div></div></div><a id="totop" href="#top"></a><div id="footer"><div class="footer-info"><p><a href="/baidusitemap.xml">Site Map</a> |  <a href="/atom.xml">Subscribe to this site</a> |  <a href="/about/">Contact the blogger</a></p><p>本站总访问量：<i id="busuanzi_container_site_pv"><i id="busuanzi_value_site_pv"></i></i>次，本站总访客数:<i id="busuanzi_container_site_uv"><i id="busuanzi_value_site_uv"></i></i>人</p><p><span> Copyright &copy;<a href="/." rel="nofollow">马旭.</a></span><span> Theme by<a rel="nofollow" target="_blank" href="https://github.com/chaooo/hexo-theme-BlueLake"> BlueLake.</a></span><span> Count by<a href="http://busuanzi.ibruce.info/" target="_blank" rel="noopener"> busuanzi.</a></span><span> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a></span></p></div></div></div><script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script><script type="text/javascript" src="/js/search.json.js?v=2.0.4"></script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  }
+});</script><script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML" async></script><script type="text/javascript" src="/js/toctotop.js?v=2.0.4" async></script><link rel="stylesheet" type="text/css" href="/share/css/share.css"><script type="text/javascript" src="/share/js/social-share.js" charset="utf-8"></script><script type="text/javascript" src="/share/js/qrcode.js" charset="utf-8"></script></body></html>

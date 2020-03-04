@@ -1,0 +1,99 @@
+<!DOCTYPE html><html lang="en"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=""><link rel="stylesheet" type="text/css" href="//fonts.loli.net/css?family=Source+Code+Pro"><link rel="stylesheet" type="text/css" href="/css/style.css?v=2.0.4"><link rel="stylesheet" type="text/css" href="/css/highlight.css?v=2.0.4"><link rel="Shortcut Icon" href="/favicon.ico"><link rel="bookmark" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><title>计算机网络（3）-应用层（part2） | 马旭的博客</title><meta name="generator" content="Hexo 4.2.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">计算机网络（3）-应用层（part2）</h1><a id="logo" href="/.">马旭的博客</a><p class="description"></p></div><div id="nav-menu"><a href="/." class="current"><i class="fa fa-home"> Home</i></a><a href="/archives/"><i class="fa fa-archive"> Archive</i></a><a href="/about-me/"><i class="fa fa-user"> About</i></a></div><div id="search-form"><div id="result-mask" class="hide"></div><label><input id="search-key" type="text" autocomplete="off" placeholder="search"></label><div id="result-wrap" class="hide"><div id="search-result"></div></div><div class="hide"><template id="search-tpl"><div class="item"><a href="/{path}" title="{title}"><div class="title">{title}</div><div class="time">{date}</div><div class="tags">{tags}</div></a></div></template></div></div></div><div id="layout" class="layout-g"><div class="layout-l"><div class="content_container"><div class="post"><h1 class="post-title">计算机网络（3）-应用层（part2）</h1><div class="post-meta"><a href="/2020/01/28/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%883%EF%BC%89-%E5%BA%94%E7%94%A8%E5%B1%82%EF%BC%88part2%EF%BC%89/#comments" class="comment-count"></a><p><span class="date">Jan 28, 2020</span><span><i id="busuanzi_container_page_pv"><i id="busuanzi_value_page_pv"></i><i>Hits</i></i></span></p></div><div class="post-content"><p>主要为上一次没有写道的应用层应用，包括Email、DNS、P2P，以及Socket编程。</p>
+<h2 id="Email应用"><a href="#Email应用" class="headerlink" title="Email应用"></a>Email应用</h2><h3 id="Email应用的构成"><a href="#Email应用的构成" class="headerlink" title="Email应用的构成"></a>Email应用的构成</h3><p>邮件客户端：读、写Email消息</p>
+<p>邮件服务器：提供邮箱，存储发给该用户的Email；消息队列，存储等待发送的Email</p>
+<h3 id="SMTP协议"><a href="#SMTP协议" class="headerlink" title="SMTP协议"></a>SMTP协议</h3><p>邮件服务器之间传递消息所使用的协议。</p>
+<p>使用TCP协议，端口25。</p>
+<p>三个阶段：握手、消息的传输、关闭</p>
+<p>命令/响应交互模式：</p>
+<p>​    命令（command）：ASCII文本</p>
+<p>​    响应（response）：状态代码和语句</p>
+<p><img src="https://i.postimg.cc/G25vVTLh/screenshot-2.png" alt="SMTP交互模式"></p>
+<p>特点：使用持久性连接、要求消息必须由7位ASCII码构成、利用CRLF.CRLF确定消息的结束。</p>
+<p>HTTP为拉式，SMTP为推式。都使用命令/响应交互模式，命令和状态码都为ASCII码，HTTP将每个对象封装在独立的响应消息中，SMTP将多个对象在由多个部分构成的消息中发送。</p>
+<h3 id="Email消息格式"><a href="#Email消息格式" class="headerlink" title="Email消息格式"></a>Email消息格式</h3><p>头部行（header）：To，From，Subject （与SMTP命令不同）</p>
+<p>消息体：消息本身，只能是ASCII字符</p>
+<p>MIME（多媒体邮件扩展）：通过在邮件头部增加额外的行以声明MIME的内容类型</p>
+<p><img src="https://i.postimg.cc/rzXThj7G/screenshot-2.png" alt="MIME"></p>
+<p>将多媒体数据按照规定的编码方式编码为ASCII码放到消息体中。</p>
+<h3 id="邮件访问协议"><a href="#邮件访问协议" class="headerlink" title="邮件访问协议"></a>邮件访问协议</h3><p><img src="https://i.postimg.cc/tgtz7gX9/screenshot-2.png" alt=""></p>
+<p>POP（Post Office Protocol）协议：</p>
+<p>​    认证和下载，无状态协议</p>
+<p>IMAP（Internet Mail Access Protocol）：</p>
+<p>​    更多的功能，能够操纵服务器上存储的信息，允许用户利用文件夹组织消息，支持跨会话的用户状态</p>
+<p>HTTP：</p>
+<p>​    163，QQ等</p>
+<h2 id="DNS（Domain-Name-System）"><a href="#DNS（Domain-Name-System）" class="headerlink" title="DNS（Domain Name System）"></a>DNS（Domain Name System）</h2><p>目的：解决互联网上的主机/路由器识别问题，域名和IP地址之间的映射。</p>
+<p>DNS：由多层命名服务器构成的分布式数据库，完成名字的解析。</p>
+<p>功能：域名向IP地址的翻译、主机别名、邮件服务器别名、负载均衡（提供多个映射，轮流访问）。</p>
+<p>集中式DNS的缺点：单点失败问题、流量问题、距离问题、维护性问题。</p>
+<h3 id="DNS服务器结构"><a href="#DNS服务器结构" class="headerlink" title="DNS服务器结构"></a>DNS服务器结构</h3><p><img src="https://i.postimg.cc/tJBbb6Sw/screenshot-2.png" alt="DNS层次"></p>
+<p><img src="https://i.postimg.cc/RFPpVTm7/screenshot-2.png" alt="DNS查询过程"></p>
+<ul>
+<li><p>根域名服务器：本地域名服务器无法解析时，访问根域名服务器</p>
+</li>
+<li><p>顶级域名服务器（TLD）：负责com，org，net等顶级域名和国家顶级域名</p>
+</li>
+<li><p>权威域名服务区：组织的域名解析服务器，提供组织内部服务器的解析服务</p>
+</li>
+<li><p>本地域名解析服务器：不严格属于层次体系，每一个ISP有一个本地域名服务器，当主机进行DNS查询时，将查询发送出去，功能类似于proxy</p>
+</li>
+</ul>
+<p>查询时采用迭代查询或递归查询</p>
+<p>迭代查询：</p>
+<p><img src="https://i.postimg.cc/Vs9MPNYR/screenshot-2.png" alt="迭代查询"></p>
+<p>递归查询：</p>
+<p><img src="https://i.postimg.cc/8c7qWYPk/screenshot-2.png" alt="递归查询"></p>
+<h3 id="DNS记录缓存与更新"><a href="#DNS记录缓存与更新" class="headerlink" title="DNS记录缓存与更新"></a>DNS记录缓存与更新</h3><p>只要域名解析服务器获得域名——IP映射，就缓存信息。</p>
+<h3 id="DNS记录和消息格式"><a href="#DNS记录和消息格式" class="headerlink" title="DNS记录和消息格式"></a>DNS记录和消息格式</h3><h4 id="DNS记录"><a href="#DNS记录" class="headerlink" title="DNS记录"></a>DNS记录</h4><p>资源记录（RR，resource records）：name，value，type，ttl</p>
+<ul>
+<li><p>Type=A：（主机到IP的映射） name：主机域名  value：IP地址</p>
+</li>
+<li><p>Type=NS：（域到解析服务器的映射）name：域  Value：该域权威域名解析服务器的主机域名</p>
+</li>
+<li><p>Type=CNAME （别名）name：别名  value：真实域名</p>
+</li>
+<li><p>Type=MX （用于邮件服务）value是与name相对应的邮件服务器</p>
+</li>
+</ul>
+<h4 id="DNS协议"><a href="#DNS协议" class="headerlink" title="DNS协议"></a>DNS协议</h4><p>查询（query）/回复（reply）协议，消息格式相同</p>
+<p><img src="https://i.postimg.cc/mrMqb9pk/screenshot-2.png" alt="DNS报文"></p>
+<h2 id="P2P应用"><a href="#P2P应用" class="headerlink" title="P2P应用"></a>P2P应用</h2><p>特点：没有服务器和客户的概念，任意端系统之间直接通信，结点间断性接入，IP地址可能改变。</p>
+<h3 id="BitTorrnt"><a href="#BitTorrnt" class="headerlink" title="BitTorrnt"></a>BitTorrnt</h3><p>torrent：交换同一个文件快的结点组</p>
+<p>tracker：跟踪参与torrent的结点</p>
+<p>​        文件被划分为256KB的chunk，结点加入torrent后，向tracker注册以获得节点清单，与某些邻居建立连接，下载的同时，结点需要向其他结点上传chunk，一旦结点获取完整文件，可以离开或留下。</p>
+<p>​        任意时刻，不同的结点持有不同chunk集合，结点定期查询每个邻居持有的chunk列表，结点优先请求稀缺的chunk。同时，有“一报还一报”的机制激励结点向其他结点上传。</p>
+<h3 id="索引技术"><a href="#索引技术" class="headerlink" title="索引技术"></a>索引技术</h3><p>P2P系统的索引：信息到结点位置（IP+端口号）的映射。</p>
+<p>文件共享中，利用索引动态跟踪结点共享的文件的位置；在即时消息软件中，索引负责将用户名映射到位置。</p>
+<h3 id="集中式索引"><a href="#集中式索引" class="headerlink" title="集中式索引"></a>集中式索引</h3><p>​    拥有一个中央服务器，任意一个结点加入时，需要通知中央服务器，查找时需要请求中央服务器获取信息。</p>
+<p>​    缺点：单点失效问题（类比集中式DNS的缺点）、性能瓶颈、版权问题。</p>
+<h3 id="洪泛式查询"><a href="#洪泛式查询" class="headerlink" title="洪泛式查询"></a>洪泛式查询</h3><p>​        完全分布式架构，每个结点对它共享的文件进行索引，且只对它共享的文件进行索引。</p>
+<p>​        结点X与Y之间如果有TCP连接，就构成图中的一个边，所有的结点和边形成覆盖网络。查询消息通过已有的TCP连接发送。收到查询的结点会继续转发查询消息，如果查询命中，则利用反向路径发回查询结点。这样的查询方式称为洪泛式查询。</p>
+<p><img src="https://i.postimg.cc/909PL2kz/screenshot-2.png" alt="洪泛式查询"></p>
+<p>​        洪泛式查询会导致消息泛滥，引起网络拥堵。</p>
+<h3 id="层次式覆盖网络"><a href="#层次式覆盖网络" class="headerlink" title="层次式覆盖网络"></a>层次式覆盖网络</h3><p>​    介于集中式索引和洪泛查询之间。每个结点或者是一个超级结点，或者被分配一个超级结点。结点与超级结点之间维持TCP连接，某些超级结点对之间维持TCP连接。超级结点负责跟踪子节点的内容。</p>
+<p><img src="https://i.postimg.cc/nzptFV4f/screenshot-2.png" alt="层次式覆盖网络"></p>
+<h2 id="Socket编程"><a href="#Socket编程" class="headerlink" title="Socket编程"></a>Socket编程</h2><p>网络程序可能的设计方式：</p>
+<ul>
+<li><p>直接网卡编程：硬件相关</p>
+</li>
+<li><p>基于Packet Driver编程：屏蔽网卡细节</p>
+</li>
+<li><p>基于NDIS网络编程：Windows</p>
+</li>
+<li><p>基于一些函数库</p>
+</li>
+<li><p>NetBIOS编程：Windows</p>
+</li>
+<li><p>socket编程：在应用层和传输层之间</p>
+</li>
+<li><p>Web/RPC/中间件编程：应用层之上</p>
+<p>  ​    Socket对外通过IP地址和端口号来标识通信端点，在操作系统内通过套接字描述符管理。类似于文件的抽象，当应用进程创建套接字时，操作系统分配一个数据结构存储套接字的相关信息，同时返回套接字描述符，指向对于的Socket数据结构。</p>
+</li>
+</ul>
+</div><div class="post-copyright"><blockquote><p>Original author: 马旭</p><p>Original link: <a href="https://bhmaxu.github.io/2020/01/28/计算机网络（3）-应用层（part2）/">https://bhmaxu.github.io/2020/01/28/计算机网络（3）-应用层（part2）/</a></p><p>Copyright Notice: Please indicate the source of the reprint (must retain the author's signature and link)</p></blockquote></div><div class="tags"><a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a></div><div class="post-share"><div class="social-share"><span>Share:</span></div></div><div class="post-nav"><a href="/2020/01/29/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%884%EF%BC%89-%E4%BC%A0%E8%BE%93%E5%B1%82%EF%BC%88part1%EF%BC%89/" class="pre">计算机网络（4）-传输层（part1）</a><a href="/2020/01/28/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%882%EF%BC%89-%E5%BA%94%E7%94%A8%E5%B1%82%20%EF%BC%88part1%EF%BC%89/" class="next">计算机网络（2）-应用层(part1)</a></div><div id="comments"></div></div></div></div><div class="layout-r"><div id="sidebar"><div class="search-pla"></div><div id="toc" class="widget"><div class="widget-title"><i class="fa fa-fei">Contents</i></div><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Email应用"><span class="toc-text">Email应用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Email应用的构成"><span class="toc-text">Email应用的构成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SMTP协议"><span class="toc-text">SMTP协议</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Email消息格式"><span class="toc-text">Email消息格式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#邮件访问协议"><span class="toc-text">邮件访问协议</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DNS（Domain-Name-System）"><span class="toc-text">DNS（Domain Name System）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#DNS服务器结构"><span class="toc-text">DNS服务器结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DNS记录缓存与更新"><span class="toc-text">DNS记录缓存与更新</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DNS记录和消息格式"><span class="toc-text">DNS记录和消息格式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#DNS记录"><span class="toc-text">DNS记录</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DNS协议"><span class="toc-text">DNS协议</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#P2P应用"><span class="toc-text">P2P应用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#BitTorrnt"><span class="toc-text">BitTorrnt</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#索引技术"><span class="toc-text">索引技术</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#集中式索引"><span class="toc-text">集中式索引</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#洪泛式查询"><span class="toc-text">洪泛式查询</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#层次式覆盖网络"><span class="toc-text">层次式覆盖网络</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Socket编程"><span class="toc-text">Socket编程</span></a></li></ol></div><div class="widget"><div class="widget-title"><i class="fa fa-xie"> Recent</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2020/03/05/%E7%96%AB%E6%83%85%E6%9C%9F%E9%97%B4%E7%9A%84%E8%87%AA%E6%88%91%E5%8F%8D%E6%80%9D/">疫情期间的自我反思</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/11/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%8810%EF%BC%89-%E5%B1%80%E5%9F%9F%E7%BD%91/">计算机网络（10）-局域网</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/11/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%882%EF%BC%89/">设计模式（2）</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/10/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%881%EF%BC%89/">设计模式（1）</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%889%EF%BC%89-%E9%93%BE%E8%B7%AF%E5%B1%82/">计算机网络（9）-链路层</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%888%EF%BC%89-%E7%BD%91%E7%BB%9C%E5%B1%82%EF%BC%88part3%EF%BC%89/">计算机网络（8）-网络层（part3）</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%887%EF%BC%89-%E7%BD%91%E7%BB%9C%E5%B1%82%EF%BC%88part2%EF%BC%89/">计算机网络（7）-网络层（part2）</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/09/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%886%EF%BC%89-%E7%BD%91%E7%BB%9C%E5%B1%82%EF%BC%88part1%EF%BC%89/">计算机网络（6）-网络层（part1）</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/08/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%885%EF%BC%89-%E4%BC%A0%E8%BE%93%E5%B1%82%EF%BC%88part2%EF%BC%89/">计算机网络（5）-传输层（part2）</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/01/29/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%884%EF%BC%89-%E4%BC%A0%E8%BE%93%E5%B1%82%EF%BC%88part1%EF%BC%89/">计算机网络（4）-传输层（part1）</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-biao"> Tags</i></div><div class="tagcloud"><a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" style="font-size: 15px;">计算机网络</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 15px;">设计模式</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-archive"> Archive</i></div><ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/">2020</a><span class="archive-list-count">13</span></li></ul></div></div></div></div><a id="totop" href="#top"></a><div id="footer"><div class="footer-info"><p><a href="/baidusitemap.xml">Site Map</a> |  <a href="/atom.xml">Subscribe to this site</a> |  <a href="/about/">Contact the blogger</a></p><p>本站总访问量：<i id="busuanzi_container_site_pv"><i id="busuanzi_value_site_pv"></i></i>次，本站总访客数:<i id="busuanzi_container_site_uv"><i id="busuanzi_value_site_uv"></i></i>人</p><p><span> Copyright &copy;<a href="/." rel="nofollow">马旭.</a></span><span> Theme by<a rel="nofollow" target="_blank" href="https://github.com/chaooo/hexo-theme-BlueLake"> BlueLake.</a></span><span> Count by<a href="http://busuanzi.ibruce.info/" target="_blank" rel="noopener"> busuanzi.</a></span><span> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a></span></p></div></div></div><script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script><script type="text/javascript" src="/js/search.json.js?v=2.0.4"></script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  }
+});</script><script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML" async></script><script type="text/javascript" src="/js/toctotop.js?v=2.0.4" async></script><link rel="stylesheet" type="text/css" href="/share/css/share.css"><script type="text/javascript" src="/share/js/social-share.js" charset="utf-8"></script><script type="text/javascript" src="/share/js/qrcode.js" charset="utf-8"></script></body></html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html><html lang="en"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=""><link rel="stylesheet" type="text/css" href="//fonts.loli.net/css?family=Source+Code+Pro"><link rel="stylesheet" type="text/css" href="/css/style.css?v=2.0.4"><link rel="stylesheet" type="text/css" href="/css/highlight.css?v=2.0.4"><link rel="Shortcut Icon" href="/favicon.ico"><link rel="bookmark" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><title>计算机网络（9）-链路层 | 马旭的博客</title><meta name="generator" content="Hexo 4.2.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">计算机网络（9）-链路层</h1><a id="logo" href="/.">马旭的博客</a><p class="description"></p></div><div id="nav-menu"><a href="/." class="current"><i class="fa fa-home"> Home</i></a><a href="/archives/"><i class="fa fa-archive"> Archive</i></a><a href="/about-me/"><i class="fa fa-user"> About</i></a></div><div id="search-form"><div id="result-mask" class="hide"></div><label><input id="search-key" type="text" autocomplete="off" placeholder="search"></label><div id="result-wrap" class="hide"><div id="search-result"></div></div><div class="hide"><template id="search-tpl"><div class="item"><a href="/{path}" title="{title}"><div class="title">{title}</div><div class="time">{date}</div><div class="tags">{tags}</div></a></div></template></div></div></div><div id="layout" class="layout-g"><div class="layout-l"><div class="content_container"><div class="post"><h1 class="post-title">计算机网络（9）-链路层</h1><div class="post-meta"><a href="/2020/02/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%889%EF%BC%89-%E9%93%BE%E8%B7%AF%E5%B1%82/#comments" class="comment-count"></a><p><span class="date">Feb 10, 2020</span><span><i id="busuanzi_container_page_pv"><i id="busuanzi_value_page_pv"></i><i>Hits</i></i></span></p></div><div class="post-content"><p>介绍链路层</p>
+<h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>结点（nodes）：主机和路由器</p>
+<p>链路（links）：连接相邻结点的通信信道，有线链路，无线链路，局域网等</p>
+<p>帧（frame）：封装网络层数据报</p>
+<p>数据链路层负责通过一条链路从一个结点向另一个物理链路直接相连的结点传输数据</p>
+<p>链路层服务：</p>
+<ul>
+<li>组帧（framing）：封装数据报构成数据帧，加首部和尾部，帧同步，识别帧，如在首尾加特殊比特串等方式</li>
+<li>链路接入（link access）：如果共享介质，需要解决信道接入，MAC地址</li>
+<li>相邻结点之间的可靠交付：在低误码率的有线链路（光纤，某些双绞线）很少采用，无线链路等误码率高的链路需要可靠交付</li>
+<li>流量控制：协调相邻结点的发送和接收</li>
+<li>差错检测 </li>
+<li>全双工和半双工通信控制</li>
+</ul>
+<p>一般由网卡实现，以太网网卡、WiFi网卡等，同时实现链路层和物理层，与主机总线连接</p>
+<h3 id="差错编码"><a href="#差错编码" class="headerlink" title="差错编码"></a>差错编码</h3><p>基本原理：增加冗余信息</p>
+<p>差错编码可分为<strong>检错码</strong>和<strong>纠错码</strong></p>
+<p>检错码：如果编码集的汉明距离为r+1，则差错编码可以检测r位的差错。汉明距离为对应比特不同位的个数，编码集的汉明距离为所有码之间汉明距离的最小值</p>
+<p>纠错码：如果编码集的汉明距离为2r+1，则可以纠正r位的差错</p>
+<h4 id="奇偶校验码"><a href="#奇偶校验码" class="headerlink" title="奇偶校验码"></a>奇偶校验码</h4><p>1bit校验位：检测奇数位差错，编码效率高，但只有百分之五十概率检测</p>
+<p>二位奇偶校验：每一行每一列都计算，可以检测奇数位差错，部分偶数位差错</p>
+<h4 id="checksum"><a href="#checksum" class="headerlink" title="checksum"></a>checksum</h4><p>将数据划分为16bit的二进制整数序列，补码求和，最高位进位1返回最低为继续加，最后求反码</p>
+<h4 id="循环冗余校验码（CRC）"><a href="#循环冗余校验码（CRC）" class="headerlink" title="循环冗余校验码（CRC）"></a>循环冗余校验码（CRC）</h4><p>检错能力很强</p>
+<p>将数据看为二进制数D，选择一个r+1位的比特模式G，目标：选择r位的CRC比特R，满足&lt;D，R&gt;可以被G整除（模2）</p>
+<p>广泛用于实际网络</p>
+<h3 id="多路访问控制协议（MAC）"><a href="#多路访问控制协议（MAC）" class="headerlink" title="多路访问控制协议（MAC）"></a>多路访问控制协议（MAC）</h3><p>两类链路：</p>
+<ul>
+<li>点对点，如拨号接入的PPP，以太网交换机与主机间的点对点链路</li>
+<li>广播链路（共享介质），如早期总线以太网，WIFI，传播声音的空气</li>
+</ul>
+<p>MAC协议解决单一共享广播信道时两个或两个以上结点同时传输，产生冲突的问题</p>
+<p>多路访问控制协议（multiple access control protocol）</p>
+<ul>
+<li>采用分布式算法决定结点如何共享信道</li>
+<li>必须基于信道本身，不依赖第三方信道</li>
+</ul>
+<p>理想MAC协议：</p>
+<p>给定速率为R bps的广播信道，期望</p>
+<ul>
+<li>只有一个结点希望传输数据，可以以数据R传输</li>
+<li>多个结点希望传输时，可以平均分配R</li>
+<li>完全分散控制</li>
+<li>简单</li>
+</ul>
+<p>分类：</p>
+<ul>
+<li>信道划分，多路复用技术，TDMA、FDMA、CDMA、WDMA等</li>
+<li>随机访问，信道不划分，允许冲突，采用冲突恢复机制</li>
+<li>轮转，结点轮流使用信道，每个结点使用时可以得到全部带宽</li>
+</ul>
+<h4 id="随机访问MAC协议"><a href="#随机访问MAC协议" class="headerlink" title="随机访问MAC协议"></a>随机访问MAC协议</h4><p>结点利用全部带宽发送分组，没有事先的结点间协调，可能发送冲突</p>
+<h5 id="时隙ALOHA协议"><a href="#时隙ALOHA协议" class="headerlink" title="时隙ALOHA协议"></a>时隙ALOHA协议</h5><p>假定：</p>
+<ul>
+<li>所有帧大小相同</li>
+<li>时间被划分成等长的时隙</li>
+<li>结点只能在时隙开始时刻发送帧</li>
+<li>结点间时钟同步</li>
+<li>如果两个或两个以上结点在同一时隙发送帧，则结点检测到冲突</li>
+</ul>
+<p>运行：</p>
+<ul>
+<li>当结点有新的帧时，在下一个时隙发送。如果无冲突，该结点可以在下一个时隙继续发送，如果冲突，该结点在下一个时隙以概率p发送帧，直到成功</li>
+</ul>
+<p>优点：</p>
+<ul>
+<li>单个结点活动时，可以以信道全部带宽传输数据</li>
+<li>高度分散化</li>
+<li>简单</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>冲突，浪费时隙</li>
+<li>出现空闲时隙</li>
+<li>结点也许能以远小于分组传输时间检测到冲突</li>
+<li>时钟同步</li>
+</ul>
+<p><strong>效率</strong>：长期运行时，成功发送帧占用的时隙所占比例</p>
+<p>一个结点在一个时隙成功发送的概率 $ p(1-p)^{N-1} $</p>
+<p>任意结点 $ Np(1-p)^{N-1} $</p>
+<p>最大效率为1/e=0.37 （N趋于无穷）</p>
+<h5 id="ALOHA协议"><a href="#ALOHA协议" class="headerlink" title="ALOHA协议"></a>ALOHA协议</h5><p>无需同步，当有新的帧时，立即发送，冲突可能性增大，效率更低</p>
+<h5 id="CSMA协议（载波监听多路访问协议）"><a href="#CSMA协议（载波监听多路访问协议）" class="headerlink" title="CSMA协议（载波监听多路访问协议）"></a>CSMA协议（载波监听多路访问协议）</h5><p>发送帧之前，监听信道（载波）</p>
+<ul>
+<li>信道空闲，发送完整帧</li>
+<li>信道忙，推迟发送</li>
+</ul>
+<p>冲突仍然可能发生，信号延迟传播，多节点同时向空闲信道发生数据等</p>
+<h5 id="CSMA-CD协议"><a href="#CSMA-CD协议" class="headerlink" title="CSMA/CD协议"></a>CSMA/CD协议</h5><p>带有冲突检测（Collision Detection）的CSMA协议，边发送数据边检测冲突，一旦检测冲突，就停止发送，减少浪费资源</p>
+<p>冲突检测：</p>
+<ul>
+<li>有线局域网易于实现，测量信号强度，比较发射信号和接收信号</li>
+<li>无线局域网难以实现，信号衰减快</li>
+</ul>
+<p>“边发边听，不发不听”</p>
+<h4 id="轮转访问的MAC协议"><a href="#轮转访问的MAC协议" class="headerlink" title="轮转访问的MAC协议"></a>轮转访问的MAC协议</h4><p>信道划分MAC协议：</p>
+<ul>
+<li>网络负载重时，共享信道效率高，且公平</li>
+<li>网络负责轻时，效率低</li>
+</ul>
+<p>随机访问MAC协议：</p>
+<ul>
+<li>网络负载轻时，效率高，单个结点利用信道的全部带宽</li>
+<li>负载重时，产生冲突开销</li>
+</ul>
+<p>轮询（polling）：</p>
+<ul>
+<li>主节点轮流邀请从属结点发送数据</li>
+<li>典型应用，哑（dumb）从属设备</li>
+</ul>
+<p>问题：</p>
+<ul>
+<li>轮询开销</li>
+<li>等待延迟</li>
+<li>单点故障，主节点宕机，整个网络瘫痪</li>
+</ul>
+<p>令牌传递（token passing）：</p>
+<ul>
+<li>控制令牌一次从一个结点传递到下一个结点</li>
+<li>令牌：特殊帧</li>
+</ul>
+<p>问题：</p>
+<ul>
+<li>令牌开销</li>
+<li>等待延迟</li>
+<li>单点故障，一个结点丢失令牌，整个网络都发生问题</li>
+</ul>
+</div><div class="post-copyright"><blockquote><p>Original author: 马旭</p><p>Original link: <a href="https://bhmaxu.github.io/2020/02/10/计算机网络（9）-链路层/">https://bhmaxu.github.io/2020/02/10/计算机网络（9）-链路层/</a></p><p>Copyright Notice: Please indicate the source of the reprint (must retain the author's signature and link)</p></blockquote></div><div class="tags"><a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a></div><div class="post-share"><div class="social-share"><span>Share:</span></div></div><div class="post-nav"><a href="/2020/02/10/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%881%EF%BC%89/" class="pre">设计模式（1）</a><a href="/2020/02/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%888%EF%BC%89-%E7%BD%91%E7%BB%9C%E5%B1%82%EF%BC%88part3%EF%BC%89/" class="next">计算机网络（8）-网络层（part3）</a></div><div id="comments"></div></div></div></div><div class="layout-r"><div id="sidebar"><div class="search-pla"></div><div id="toc" class="widget"><div class="widget-title"><i class="fa fa-fei">Contents</i></div><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#概述"><span class="toc-text">概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#差错编码"><span class="toc-text">差错编码</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#奇偶校验码"><span class="toc-text">奇偶校验码</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#checksum"><span class="toc-text">checksum</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#循环冗余校验码（CRC）"><span class="toc-text">循环冗余校验码（CRC）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多路访问控制协议（MAC）"><span class="toc-text">多路访问控制协议（MAC）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#随机访问MAC协议"><span class="toc-text">随机访问MAC协议</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#时隙ALOHA协议"><span class="toc-text">时隙ALOHA协议</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#ALOHA协议"><span class="toc-text">ALOHA协议</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#CSMA协议（载波监听多路访问协议）"><span class="toc-text">CSMA协议（载波监听多路访问协议）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#CSMA-CD协议"><span class="toc-text">CSMA&#x2F;CD协议</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#轮转访问的MAC协议"><span class="toc-text">轮转访问的MAC协议</span></a></li></ol></li></ol></div><div class="widget"><div class="widget-title"><i class="fa fa-xie"> Recent</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2020/03/05/%E7%96%AB%E6%83%85%E6%9C%9F%E9%97%B4%E7%9A%84%E8%87%AA%E6%88%91%E5%8F%8D%E6%80%9D/">疫情期间的自我反思</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/11/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%8810%EF%BC%89-%E5%B1%80%E5%9F%9F%E7%BD%91/">计算机网络（10）-局域网</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/11/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%882%EF%BC%89/">设计模式（2）</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/10/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%881%EF%BC%89/">设计模式（1）</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%889%EF%BC%89-%E9%93%BE%E8%B7%AF%E5%B1%82/">计算机网络（9）-链路层</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%888%EF%BC%89-%E7%BD%91%E7%BB%9C%E5%B1%82%EF%BC%88part3%EF%BC%89/">计算机网络（8）-网络层（part3）</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/10/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%887%EF%BC%89-%E7%BD%91%E7%BB%9C%E5%B1%82%EF%BC%88part2%EF%BC%89/">计算机网络（7）-网络层（part2）</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/09/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%886%EF%BC%89-%E7%BD%91%E7%BB%9C%E5%B1%82%EF%BC%88part1%EF%BC%89/">计算机网络（6）-网络层（part1）</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/08/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%885%EF%BC%89-%E4%BC%A0%E8%BE%93%E5%B1%82%EF%BC%88part2%EF%BC%89/">计算机网络（5）-传输层（part2）</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/01/29/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%EF%BC%884%EF%BC%89-%E4%BC%A0%E8%BE%93%E5%B1%82%EF%BC%88part1%EF%BC%89/">计算机网络（4）-传输层（part1）</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-biao"> Tags</i></div><div class="tagcloud"><a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" style="font-size: 15px;">计算机网络</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 15px;">设计模式</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-archive"> Archive</i></div><ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/">2020</a><span class="archive-list-count">13</span></li></ul></div></div></div></div><a id="totop" href="#top"></a><div id="footer"><div class="footer-info"><p><a href="/baidusitemap.xml">Site Map</a> |  <a href="/atom.xml">Subscribe to this site</a> |  <a href="/about/">Contact the blogger</a></p><p>本站总访问量：<i id="busuanzi_container_site_pv"><i id="busuanzi_value_site_pv"></i></i>次，本站总访客数:<i id="busuanzi_container_site_uv"><i id="busuanzi_value_site_uv"></i></i>人</p><p><span> Copyright &copy;<a href="/." rel="nofollow">马旭.</a></span><span> Theme by<a rel="nofollow" target="_blank" href="https://github.com/chaooo/hexo-theme-BlueLake"> BlueLake.</a></span><span> Count by<a href="http://busuanzi.ibruce.info/" target="_blank" rel="noopener"> busuanzi.</a></span><span> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a></span></p></div></div></div><script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script><script type="text/javascript" src="/js/search.json.js?v=2.0.4"></script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  }
+});</script><script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML" async></script><script type="text/javascript" src="/js/toctotop.js?v=2.0.4" async></script><link rel="stylesheet" type="text/css" href="/share/css/share.css"><script type="text/javascript" src="/share/js/social-share.js" charset="utf-8"></script><script type="text/javascript" src="/share/js/qrcode.js" charset="utf-8"></script></body></html>
